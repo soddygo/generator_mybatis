@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE  mapper  PUBLIC  "-//mybatis.org//DTD  Mapper  3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dmall.purchase.dao.${table.mapperName}">
+
+    <!-- 查询数量 -->
+    <select id="count" parameterType="DbQueryCriterion" resultType="Long">
+        select count(1) from ${table.name}
+        <include refid="dbcore.criterion"/>
+    </select>
+
+    <!-- 查询列表 -->
+    <select id="selectList" parameterType="DbQueryCriterion" resultMap="${cfg.capitalName}Map">
+        select
+        <include refid="dbcore.result"/>
+        from ${table.name}
+        <include refid="dbcore.criterion"/>
+    </select>
+
+    <select id="selectListAsMap" parameterType="DbQueryCriterion" resultType="java.util.HashMap">
+        select
+        <include refid="dbcore.result"/>
+        from ${table.name}
+        <include refid="dbcore.criterion"/>
+    </select>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="${entity}">
+        update ${table.name}
+        <include refid="update_entity"/>
+        <include refid="dbcore.criterion"/>
+    </update>
+
+    <update id="updateByMap">
+        update ${table.name}
+        <include refid="dbcore.updateMap"/>
+        <include refid="dbcore.criterion"/>
+    </update>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="DbQueryCriterion">
+        delete from ${table.name}
+        <include refid="dbcore.criterion"/>
+    </delete>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.dmall.purchase.pojo.${entity}">
+        insert into ${table.name}
+        #set( $index1 = 1)   #set( $index2 = 1)
+		(#foreach($field in ${table.fields})${field.name}#if($index1 != $table.fields.size()),#set( $index1 = $index1+1)#end#end)
+        values
+        (#foreach($field in ${table.fields})#{${field.propertyName}}#if($index2 != $table.fields.size()),#set( $index2 = $index2+1)#end#end)
+    </insert>
+
+    <!-- 新增 -->
+    <insert id="insertMany" parameterType="java.util.List">
+        insert into ${table.name}
+        #set( $index1 = 1)   #set( $index2 = 1)
+        (#foreach($field in ${table.fields})${field.name}#if($index1 != $table.fields.size()),#set( $index1 = $index1+1)#end#end)
+        values
+        <foreach collection="list" item="entity" index="index" separator=",">
+            (#foreach($field in ${table.fields})#{entity.${field.propertyName}}#if($index2 != $table.fields.size()),#set( $index2 =
+            $index2+1)#end#end)
+        </foreach>
+    </insert>
+
+#if(${baseResultMap})
+    <!-- 映射结果 -->
+    <resultMap id="${cfg.capitalName}Map" type="${entity}">
+        #foreach($field in ${table.fields})
+            #if(${field.keyFlag})
+                <id column="${field.name}" property="${field.propertyName}"/>
+            #else
+                <result column="${field.name}" property="${field.propertyName}"/>
+            #end
+        #end
+    </resultMap>
+#end
+
+    <!-- 更新字段 -->
+    <sql id="update_entity">
+        <set>
+		#foreach($field in ${table.fields})
+            <if test="entity.${field.propertyName} != null"><![CDATA[${field.name}=#{entity.${field.propertyName}},]]></if>
+		#end
+        </set>
+    </sql>
+</mapper>
