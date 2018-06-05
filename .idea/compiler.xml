@@ -9,8 +9,5 @@
         <module name="generator" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.5">
-      <module name="generator" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -31,6 +31,15 @@
         <include refid="dbcore.criterion"/>
     </update>
 
+    <!--批量更新 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="entity" index="index" separator=";">
+            update ${table.name}
+            <include refid="update_entity"/>
+            where id = #{entity.id}
+        </foreach>
+    </update>
+
     <update id="updateByMap">
         update ${table.name}
         <include refid="dbcore.updateMap"/>

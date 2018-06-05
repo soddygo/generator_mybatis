@@ -3,6 +3,8 @@ package ${package.Mapper};
 import ${package.Entity}.${entity};
 import ${superMapperClassPackage};
 
+import java.util.List;
+
 /**
  * <p>
  * Mapper接口
@@ -12,5 +14,15 @@ import ${superMapperClassPackage};
  * @since ${date}
  */
 public interface ${table.mapperName} extends ${superMapperClass}<${entity},Long> {
+
+
+    /**
+    * 批量更新.
+    *
+    * @param list 入参里诶包
+    * @return 数量(这里只返回1, 即使影响多条)
+    * @throws Exception 异常
+    */
+    int batchUpdate(List<${entity}> list) throws Exception;
 
 }
